@@ -227,8 +227,8 @@
     <div id="map"></div>
     <div id="ui-controls">
         <label>
-            <span class="min">2014</span>
-            <span class="max">2023</span>
+            <span class="min">2001</span>
+            <span class="max">2021</span>
             <input type="range" min="2014" , max="2023" , value="2014" , step="1" , class="year-slider" />
         </label>
     </div>
@@ -255,18 +255,21 @@
             <h1>Residential Demolitions in Detroit: 2014 &ndash; 2023</h1>
 
             <p>
-                
+                The map vizualize how the 2008 economic crisis hit the US and forced
+                unemployment, and the time it took to recovery.
             </p>
 
             <div class="title">Data sources and methods:</div>
 
             <p>
-                
-                <a href="">Link</a>
+                County unemployment data acquired from Bureau of Labor Statistics data
+                tables for years 2001 - 2021:
+                <a href="https://www.bls.gov/lau/tables.htm#mcounty">Link</a>
             </p>
             <p>
-                 Download
-                <a href="">CSV</a> file.
+                Multiple years were aggregated by county using the county and state
+                FIPS codes. Download
+                <a href="data/or-unemployment-rates.csv">CSV</a> file.
             </p>
 
             <div class="footer">New Maps Plus | March, 2023</div>
@@ -325,89 +328,45 @@
         }).addTo(map);
 
         // AJAX request for GeoJSON data
-        fetch("data/Neighborhoods_bound.json")
+        fetch("data/Completed_Residential_Demolitions.json")
             .then(function (response) {
-                console.log(response);
                 return response.json();
             })
-            .then(function (districts) {
-                console.log(districts);
-
-                Papa.parse("data/Completed_Residential_Demolitions_copy.csv", {
-                    download: true,
-                    header: true,
-                    complete: function (data) {
-                        // Create function to join data and counties
-                        processData(districts, data);
+            .then(function (demolitions) {
+                const dataLayer = L.geoJson(demolitions, {
+                    style: function (feature) {
+                        return {
+                            color: "#333",
+                            weight: 0.4,
+                            fillOpacity: 1,
+                            fillColor: "#1f78b4",
+                        };
                     },
-                }); // end of Papa.parse()
+                }).addTo(map);
+
+                map.addControl(L.control.zoom({ position: "topright" }));
+
+                drawMap(dataLayer);
+
+                return fetch("data/Neighborhoods_bound.geojson")
             })
+            .then(function (response) {
+                return response.json()
+            })
+            .then(function (data) {
+                drawAnotherLayer(data)
+            })
+            // If there is an error, log it to the console
             .catch(function (error) {
-                console.log(`Ruh roh! An error has occurred`, error);
+                console.log(error);
             });
 
 
-        function processData(districts, data) {
-
-            // loop through all the counties
-            for (let i of districts.features) {
-                // for each of the CSV data rows
-                for (let j of data.data) {
-                    // if the county fips code and data fips code match
-                    if (i.properties.name === j.neighborhood) {
-
-                        // re-assign the data for that county as the county's props
-                        i.properties = j;
-
-                        // no need to keep looping, break from inner loop
-                        break;
-                    }
-                }
-
-                console.log('after: ', districts);
-
-            }
-
-            // empty array to store all the data values
-            const rates = [];
-
-            // iterate through all the counties
-            districts.features.forEach(function (district) {
-                // iterate through all the props of each county
-                for (const prop in district.properties) {
-                    // if the attribute is a number and not one of the fips codes or name
-                    if (prop != "name" && prop != "neighborhood" && prop != "NAME") {
-                        // push that attribute value into the array
-                        rates.push(Number(district.properties[prop]));
-                    }
-                }
-            });
-
-            // verify the result!
-            console.log(rates);
-
-            var breaks = chroma.limits(rates, 'q', 5);
-
-            // create color generator function
-            var colorize = chroma.scale(['E9E1DE', '436977'])
-                .classes(breaks)
-                .mode('lab');
-
-            console.log(colorize) // function (a){var b;return b=s(u(a)),m&&b[m]?b[m]():b}
-
-            var color = colorize(20);
-            console.log(color); // a {_rgb: Array[4]}
-
-            drawMap(districts, colorize);
-
-            drawLegend(breaks, colorize);
-
-        } // end processData()
 
 
-        function drawMap(districts) {
+        function drawMap(demolitions) {
             // create Leaflet object with geometry data and add to map
-            const dataLayer = L.geoJson(districts, {
+            const dataLayer = L.geoJson(demolitions, {
                 style: function (feature) {
                     return {
                         color: "#032C2B",
@@ -440,123 +399,32 @@
                 },
             }).addTo(map);
 
-            // first set the zoom/center to the dataLayer's extent with padding
-            // map.fitBounds(dataLayer.getBounds(), {
-            //     padding: [50, 50],
-            // });
+           
 
-            createSliderUI(dataLayer);
+            createSliderUI();
 
-            updateMap(dataLayer, "2014");
+            updateMap();
         } // end drawMap()
 
-        function updateMap(dataLayer, currentYear) {
+        function updateMap() {
 
-            dataLayer.eachLayer(function (layer) {
-
-                const props = layer.feature.properties;
-
-                // set the fill color of layer based on its normalized data value
-                layer.setStyle({
-                    // fillColor: colorize(Number(props[currentYear]))
-                });
-
-                let tooltipInfo = `<b>${props["NAME"]} neighborhood</b></br>
-    ${((Number(props[currentYear]))).toLocaleString()}%`;
-
-                // bind a tooltip to layer with county-specific information
-                layer.bindTooltip(tooltipInfo, {
-                    // sticky property so tooltip follows the mouse
-                    sticky: true,
-                });
-
-
-            })
-
-
-
+            
 
         } // end updateMap()
 
-        function drawLegend(breaks, colorize) {
+        function drawLegend() {
 
-            // create a Leaflet control for the legend
-            const legendControl = L.control({
-                position: "topright",
-            });
-
-            // when the control is added to the map
-            legendControl.onAdd = function (map) {
-                // create a new division element with class of 'legend' and return
-                const legend = L.DomUtil.create("div", "legend");
-                return legend;
-            };
-
-            // add the legend control to the map
-            legendControl.addTo(map);
-
-            // select div and create legend title
-            const legend = document.querySelector(".legend");
-            legend.innerHTML = "<h3><span>2001</span> Unemployment Rates</h3><ul>";
-
-            // loop through the break values
-            for (let i = 0; i < breaks.length - 1; i++) {
-                // determine color value
-                const color = colorize(breaks[i], breaks);
-
-                // create legend item
-                const classRange = `<li><span style="background:${color}"></span>
-        ${breaks[i].toLocaleString()}% &mdash;
-        ${breaks[i + 1].toLocaleString()}% </li>`;
-
-                // append to legend unordered list item
-                legend.innerHTML += classRange;
-            }
-            // close legend unordered list
-            legend.innerHTML += "</ul>";
+            
 
         } // end drawLegend()
 
-        function createSliderUI(dataLayer, colorize) {
+        function createSliderUI() {
 
-            // create Leaflet control for the slider
-            const sliderControl = L.control({ position: "bottomleft" });
-
-            // when added to the map
-            sliderControl.onAdd = function (map) {
-                // select an existing DOM element with an id of "ui-controls"
-                const slider = L.DomUtil.get("ui-controls");
-
-                // disable scrolling of map while using controls
-                L.DomEvent.disableScrollPropagation(slider);
-
-                // disable click events while using controls
-                L.DomEvent.disableClickPropagation(slider);
-
-                // return the slider from the onAdd method
-                return slider;
-            };
-
-            // add the control to the map
-            sliderControl.addTo(map);
-
-            // select the form element
-            const slider = document.querySelector(".year-slider");
-
-            // listen for changes on input element
-            slider.addEventListener("input", function (e) {
-                // get the value of the selected option
-                const currentYear = e.target.value;
-                // update the map with current timestamp
-                updateMap(dataLayer, colorize, currentYear);
-                // update timestamp in legend heading
-                document.querySelector(".legend h3 span").innerHTML = currentYear;
-            });
-
+            
         } // end createSliderUI()
 
         function buttonUI() {
-            button.style.top = h1.offsetHeight + 20 + "px";
+           
         }
     </script>
 </body>
