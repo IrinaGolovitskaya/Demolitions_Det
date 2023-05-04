@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Residential demolitions in Detroit, MI</title>
+    <!-- Should external libraries be updated? -->
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+    <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css" />
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: whitesmoke;
+            font-family: Roboto, sans-serif;
+            color: #0d0000;
+            font-size: 100%;
+        }
+
+        h1 {
+            position: absolute;
+            z-index: 650;
+            top: 10px;
+            left: 15px;
+            padding: 8px 15px;
+            margin: 0;
+            color: whitesmoke;
+            font-size: 1.5em;
+            background: rgba(25, 25, 25, 0.8);
+            border-radius: 5px;
+        }
+
+        #map {
+            position: absolute;
+            width: 100%;
+            top: 0;
+            bottom: 0;
+        }
+
+        h2 {
+            position: absolute;
+            z-index: 650;
+            top: 10px;
+            left: 15px;
+            padding: 8px 15px;
+            margin: 0;
+            color: whitesmoke;
+            font-size: 1.2em;
+            text-transform: uppercase;
+            background: rgba(25, 25, 25, 0.8);
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        h2:hover {
+            background: rgb(72, 72, 72);
+        }
+
+        h2:active {
+            background: rgb(228, 175, 0);
+        }
+
+        .legend {
+            font-family: Lato, sans-serif;
+            padding: 6px 8px;
+            font-size: 1em;
+            background: rgba(75, 75, 75, 0.8);
+            color: whitesmoke;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            width: 160px;
+        }
+
+        .legend h3 {
+            font-size: 1.1em;
+            font-weight: bold;
+            line-height: 1em;
+            color: whitesmoke;
+            margin: 0;
+        }
+
+        .legend h3 span {
+            font-size: 1.3em;
+            margin: 0 20px 0 0;
+        }
+
+        .legend ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 12px 4px 0;
+        }
+
+        .legend li {
+            list-style-type: none;
+            height: 22px;
+        }
+
+        .legend span {
+            width: 30px;
+            height: 20px;
+            float: left;
+            margin-right: 10px;
+        }
+
+        #modal {
+            display: none;
+            position: absolute;
+            z-index: 2000;
+            padding: 10px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: whitesmoke;
+            font-size: 1.5em;
+        }
+
+        #modal .container {
+            width: 500px;
+            margin: 10px auto;
+            padding: 5px 20px;
+            position: relative;
+            background: rgba(25, 25, 25, 0.8);
+            border-radius: 5px;
+            border: #0d0000 1px solid;
+        }
+
+        #modal a:link,
+        #modal a:visited {
+            color: rgb(228, 175, 0);
+        }
+
+        #modal a:hover {
+            color: rgb(255, 234, 166);
+        }
+
+        #modal div {
+            margin: 20px auto;
+        }
+
+        #modal h1 {
+            display: none;
+        }
+
+        #modal p {
+            font-size: 1.1rem;
+            line-height: 1.5rem;
+            margin: 5px 0;
+        }
+
+        #modal .footer {
+            font-size: 1rem;
+            color: rgb(201, 201, 201);
+            text-align: center;
+        }
+
+        #modal span {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            cursor: pointer;
+        }
+
+        /* Small devices (portrait phones, 576px and below) */
+        @media (max-width: 576px) and (orientation: portrait) {
+            h1 {
+                display: none;
+            }
+
+            #modal .container {
+                width: 90%;
+            }
+
+            #modal h1 {
+                display: block;
+                position: relative;
+                margin: 20px auto;
+                padding: 0;
+                font-size: 1.6rem;
+                top: unset;
+                left: unset;
+            }
+        }
+
+        #ui-controls {
+            font-family: Lato, sans-serif;
+            width: 176px;
+            padding: 8px 25px 8px 15px;
+            background: rgba(75, 75, 75, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            color: whitesmoke;
+        }
+
+        #ui-controls .min {
+            float: left;
+        }
+
+        #ui-controls .max {
+            float: right;
+            margin-right: -15px;
+        }
+
+        .year-slider {
+            width: 100%;
+        }
+
+        label {
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Residential Demolitions in Detroit: 2014 &ndash; 2023</h1>
+    <h2 id="button">Info</h2>
+    <div id="map"></div>
+    <div id="ui-controls">
+        <label>
+            <span class="min">2014</span>
+            <span class="max">2023</span>
+            <input type="range" min="2014" , max="2023" , value="2014" , step="1" , class="year-slider" />
+        </label>
+    </div>
+    <div id="modal">
+        <div class="container">
+            <span>
+                &times;
+                <!-- <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="feather feather-x"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg> -->
+            </span>
+            <h1>Residential Demolitions in Detroit: 2014 &ndash; 2023</h1>
+
+            <p>
+
+            </p>
+
+            <div class="title">Data sources and methods:</div>
+
+            <p>
+
+                <a href="">Link</a>
+            </p>
+            <p>
+                Download
+                <a href="">CSV</a> file.
+            </p>
+
+            <div class="footer">New Maps Plus | March, 2023</div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+    <script src="leaflet-heat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.1/papaparse.min.js"
+        integrity="sha512-EbdJQSugx0nVWrtyK3JdQQ/03mS3Q1UiAhRtErbwl1YL/+e2hZdlIcSURxxh7WXHTzn83sjlh2rysACoJGfb6g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.2/chroma.min.js"
+        integrity="sha512-8TVPS0EFkkmtT6yPb5K4csnSt3tjbKRrs0F8gvTNKv2OxOcwDO7+Klkz86gMVrzfqtZos5N2a+k+r9D+hlccmQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        // get page elements
+        const modal = document.querySelector("#modal");
+        const button = document.querySelector("#button");
+        const h1 = document.querySelector("h1");
+
+        // display modal when button is clicked
+        button.addEventListener("click", function () {
+            modal.style.display = "block";
+        });
+
+        // close modal when user clicks anywhere on the page
+        modal.addEventListener("click", function () {
+            modal.style.display = "none";
+        });
+
+        // Set button UI
+        buttonUI();
+
+        // Add event listener for window resize
+        // When page rotates or is resized, reset page UI
+        window.addEventListener("resize", buttonUI);
+
+        // map options
+        const options = {
+            scrollWheelZoom: true,
+            zoomControl: false,
+            dragging: true,
+            center: [42.35, -83.15],
+            zoom: 11,
+            animate: false,
+        };
+
+        // create the Leaflet map
+        const map = L.map("map", options);
+
+        // request tiles and add to map
+        const tiles = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
+            maxZoom: 20,
+            attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        L.control.zoom({
+            position: 'bottomright'
+        }).addTo(map);
+
+        // AJAX request for GeoJSON data
+
+        fetch("data/Neighborhoods_bound.json")
+            .then(function (response) {
+                console.log(response);
+                return response.json();
+            })
+            .then(function (districts) {
+                console.log(districts);
+
+                Papa.parse("data/Completed_Residential_Demolitions_copy.csv", {
+                    download: true,
+                    header: true,
+                    complete: function (data) {
+                        // Create function to join data and counties
+                        processData(districts, data);
+                    },
+                }); // end of Papa.parse()
+
+            })
+
+            .catch(function (error) {
+                console.log(`Ruh roh! An error has occurred`, error);
+            });
+
+
+
+        function processData(districts, data) {
+
+            // loop through all the counties
+            for (let i of districts.features) {
+                // for each of the CSV data rows
+                for (let j of data.data) {
+                    // if the county fips code and data fips code match
+                    if (i.properties.name === j.neighborhood) {
+
+                        // re-assign the data for that county as the county's props
+                        i.properties = j;
+
+                        // no need to keep looping, break from inner loop
+                        break;
+                    }
+                }
+
+                console.log('after: ', districts);
+
+            }
+
+            // empty array to store all the data values
+            const rates = [];
+
+            // iterate through all the counties
+            districts.features.forEach(function (district) {
+                // iterate through all the props of each county
+                for (const prop in district.properties) {
+                    // if the attribute is a number and not one of the fips codes or name
+                    if (prop != "name" && prop != "neighborhood" && prop != "NAME") {
+                        // push that attribute value into the array
+                        rates.push(Number(district.properties[prop]));
+                    }
+                }
+            });
+
+            // verify the result!
+            console.log(rates);
+
+            var breaks = chroma.limits(rates, 'q', 5);
+
+            // create color generator function
+            var colorize = chroma.scale(['E9E1DE', '436977'])
+                .classes(breaks)
+                .mode('lab');
+
+            console.log(colorize) // function (a){var b;return b=s(u(a)),m&&b[m]?b[m]():b}
+
+            var color = colorize(20);
+            console.log(color); // a {_rgb: Array[4]}
+
+            drawMap(districts, colorize);
+
+            drawLegend(breaks, colorize);
+
+        } // end processData()
+
+
+        function drawMap(districts) {
+            // create Leaflet object with geometry data and add to map
+            const dataLayer = L.geoJson(districts, {
+                style: function (feature) {
+                    return {
+                        color: "#032C2B",
+                        weight: 1,
+                        fillOpacity: 0,
+                        fillColor: "#FFFFFF",
+                    };
+                },
+
+                onEachFeature: function (feature, layer) {
+                    // when mousing over a layer
+                    layer.on("mouseover", function () {
+                        // change the stroke color and bring that element to the front
+                        layer
+                            .setStyle({
+                                color: "#032C2B",
+                                weight: 3,
+                            })
+                            .bringToFront();
+                    });
+
+                    // on mousing off layer
+                    layer.on("mouseout", function () {
+                        // reset the layer style to its original stroke color
+                        layer.setStyle({
+                            color: "black",
+                            weight: 1,
+                        });
+                    });
+                },
+            }).addTo(map);
+
+            // first set the zoom/center to the dataLayer's extent with padding
+            // map.fitBounds(dataLayer.getBounds(), {
+            //     padding: [50, 50],
+            // });
+
+            createSliderUI(dataLayer);
+
+            updateMap(dataLayer, "2014");
+        } // end drawMap()
+
+        function updateMap(dataLayer, currentYear) {
+
+            dataLayer.eachLayer(function (layer) {
+
+                const props = layer.feature.properties;
+
+                // set the fill color of layer based on its normalized data value
+                layer.setStyle({
+                    // fillColor: colorize(Number(props[currentYear]))
+                });
+
+                let tooltipInfo = `<b>${props["NAME"]} neighborhood</b></br>
+    ${((Number(props[currentYear]))).toLocaleString()}%`;
+
+                // bind a tooltip to layer with county-specific information
+                layer.bindTooltip(tooltipInfo, {
+                    // sticky property so tooltip follows the mouse
+                    sticky: true,
+                });
+
+
+            })
+
+
+
+
+        } // end updateMap()
+
+        function drawLegend(breaks, colorize) {
+
+            // create a Leaflet control for the legend
+            const legendControl = L.control({
+                position: "topright",
+            });
+
+            // when the control is added to the map
+            legendControl.onAdd = function (map) {
+                // create a new division element with class of 'legend' and return
+                const legend = L.DomUtil.create("div", "legend");
+                return legend;
+            };
+
+            // add the legend control to the map
+            legendControl.addTo(map);
+
+            // select div and create legend title
+            const legend = document.querySelector(".legend");
+            legend.innerHTML = "<h3><span>2014</span> Unemployment Rates</h3><ul>";
+
+            // loop through the break values
+            for (let i = 0; i < breaks.length - 1; i++) {
+                // determine color value
+                const color = colorize(breaks[i], breaks);
+
+                // create legend item
+                const classRange = `<li><span style="background:${color}"></span>
+        ${breaks[i].toLocaleString()}% &mdash;
+        ${breaks[i + 1].toLocaleString()}% </li>`;
+
+                // append to legend unordered list item
+                legend.innerHTML += classRange;
+            }
+            // close legend unordered list
+            legend.innerHTML += "</ul>";
+
+        } // end drawLegend()
+
+        function createSliderUI(dataLayer, colorize) {
+
+            // create Leaflet control for the slider
+            const sliderControl = L.control({ position: "bottomleft" });
+
+            // when added to the map
+            sliderControl.onAdd = function (map) {
+                // select an existing DOM element with an id of "ui-controls"
+                const slider = L.DomUtil.get("ui-controls");
+
+                // disable scrolling of map while using controls
+                L.DomEvent.disableScrollPropagation(slider);
+
+                // disable click events while using controls
+                L.DomEvent.disableClickPropagation(slider);
+
+                // return the slider from the onAdd method
+                return slider;
+            };
+
+            // add the control to the map
+            sliderControl.addTo(map);
+
+            // select the form element
+            const slider = document.querySelector(".year-slider");
+
+            // listen for changes on input element
+            slider.addEventListener("input", function (e) {
+                // get the value of the selected option
+                const currentYear = e.target.value;
+                // update the map with current timestamp
+                updateMap(dataLayer, colorize, currentYear);
+                // update timestamp in legend heading
+                document.querySelector(".legend h3 span").innerHTML = currentYear;
+            });
+
+        } // end createSliderUI()
+
+        function buttonUI() {
+            button.style.top = h1.offsetHeight + 20 + "px";
+        }
+    </script>
+</body>
+
+</html>

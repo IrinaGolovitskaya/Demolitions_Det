@@ -276,7 +276,7 @@
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
         integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
-    <script src="leaflet-heat.js"></script>
+    <!-- <script src="leaflet-heat.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.1/papaparse.min.js"
         integrity="sha512-EbdJQSugx0nVWrtyK3JdQQ/03mS3Q1UiAhRtErbwl1YL/+e2hZdlIcSURxxh7WXHTzn83sjlh2rysACoJGfb6g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -332,7 +332,7 @@
        
 
         // AJAX request for GeoJSON data
-    fetch("data/Detroit_Census_Blocks%2C_2010.geojson")
+    fetch("data/Detroit_Census_Blocks_2010.json")
             .then(function (response) {
                 console.log(response);
                 return response.json();
@@ -349,7 +349,7 @@
                     },
                 }); // end of Papa.parse()
                 return fetch(
-                    "https://newmapsplus.github.io/assets/data/us_states_20m.geojson"
+                    "data/Neighborhoods_bound.json"
                 );
             })
             .then(function (response) {
@@ -386,7 +386,7 @@
             const rates = [];
 
             // iterate through all the counties
-            counties.features.forEach(function (tract) {
+            tracts.features.forEach(function (tract) {
                 // iterate through all the props of each county
                 for (const prop in tract.properties) {
                     // if the attribute is a number and not one of the fips codes or name
