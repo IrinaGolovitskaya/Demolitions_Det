@@ -328,7 +328,7 @@
         }).addTo(map);
 
         // AJAX request for GeoJSON data
-        fetch("data/Completed_Residential_Demolitions.json")
+        fetch("data/Completed_Residential_Demolitions.geojson")
             .then(function (response) {
                 return response.json();
             })
@@ -368,12 +368,12 @@
             // create Leaflet object with geometry data and add to map
             const dataLayer = L.geoJson(demolitions, {
                 style: function (feature) {
-                    return {
-                        color: "#032C2B",
-                        weight: 1,
-                        fillOpacity: 0,
-                        fillColor: "#FFFFFF",
-                    };
+                    // return {
+                    //     color: "#032C2B",
+                    //     weight: 1,
+                    //     fillOpacity: 0,
+                    //     fillColor: "#FFFFFF",
+                    // };
                 },
 
                 onEachFeature: function (feature, layer) {
