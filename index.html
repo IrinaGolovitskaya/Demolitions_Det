@@ -356,7 +356,7 @@
                 return response.json();
             })
             .then(function (neighborhoods) {
-                drawStates(neighborhoods);
+                drawNeighborhoods(neighborhoods);
             })
             .catch(function (error) {
                 console.log(`Ruh roh! An error has occurred`, error);
@@ -405,11 +405,11 @@
             // verify the result!
             console.log(rates);
 
-            var breaks = chroma.limits(rates, "q", 5);
+            var breaks = chroma.limits(rates, "q", 6);
 
             // create color generator function
             var colorize = chroma
-                .scale(chroma.brewer.Purples)
+                .scale(['E9E1DE','A3A6A6'])
                 .classes(breaks)
                 .mode("lab");
 
@@ -429,7 +429,7 @@
           style: function (feature) {
             return {
               color: "black",
-              weight: 1,
+              weight: 0,
               fillOpacity: 1,
               fillColor: "#1f78b4",
             };
@@ -510,7 +510,7 @@
 
         // select div and create legend title
         const legend = document.querySelector(".legend");
-        legend.innerHTML = "<h3><span>2014</span> Unemployment Rates</h3><ul>";
+        legend.innerHTML = "<h3><span>2014</span> Housing units</h3><ul>";
 
         // loop through the break values
         for (let i = 0; i < breaks.length - 1; i++) {
@@ -570,13 +570,13 @@
         button.style.top = h1.offsetHeight + 20 + "px";
       }
 
-      function drawStates(neighborhoods) {
+      function drawNeighborhoods(neighborhoods) {
         const bounds = L.latLngBounds();
         const stateOutline = L.geoJson(neighborhoods, {
           style: function (feature) {
             return {
               color: "#000",
-              weight: 2.25,
+              weight: 1,
               opacity: 0.75,
               fillOpacity: 0,
               interactive: false,
@@ -584,10 +584,7 @@
           },
           onEachFeature: function (feature, layer) {
             const name = feature.properties.NAME;
-            if (name == "Florida" || name == "Washington" || name == "Maine") {
-              console.log(feature);
-              bounds.extend(layer.getBounds());
-            }
+           
           },
         })
           .addTo(map)
