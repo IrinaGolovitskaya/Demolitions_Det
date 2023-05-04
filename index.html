@@ -367,10 +367,10 @@
             for (let i of tracts.features) {
                 // for each of the CSV data rows
                 for (let j of data.data) {
-                    const fips = j.STATE_FIP.concat(j.COUNTY_FIP);
+                    const tractnumbers = j.NAME;
 
                     // if the county fips code and data fips code match
-                    if (i.properties.GEOID === fips) {
+                    if (i.properties.TRACTCE10.slice(0, -2) === tractnumbers) {
                         // Add a new property to hold the unemployment rates
                         i.properties = j;
 
@@ -391,22 +391,16 @@
                 for (const prop in tract.properties) {
                     // if the attribute is a number and not one of the fips codes or name
                     if (
-                        prop != "COUNTY_FIP" &&
-                        prop != "STATE_FIP" &&
-                        prop != "NAME" &&
-                        prop != "GEOID"
+                        prop != "GEO_ID" &&
+                        prop != "NAME" 
                     ) {
                         // push that attribute value into the array
                         rates.push(Number(tract.properties[prop]));
-                        // What is 15005?
-                        if (Number(tract.properties[prop]) == 15005) {
-                            console.log(county.properties);
-                            // Kalawao County, HI
-                            // What happened to this county? fascinating story...
+                 
                         }
                     }
                 }
-            });
+            );
 
             // verify the result!
             console.log(rates);
@@ -471,7 +465,7 @@
 
         createSliderUI(dataLayer, colorize);
 
-        updateMap(dataLayer, colorize, "2001");
+        updateMap(dataLayer, colorize, "2014");
       } // end drawMap()
 
       function updateMap(dataLayer, colorize, currentYear) {
@@ -516,7 +510,7 @@
 
         // select div and create legend title
         const legend = document.querySelector(".legend");
-        legend.innerHTML = "<h3><span>2001</span> Unemployment Rates</h3><ul>";
+        legend.innerHTML = "<h3><span>2014</span> Unemployment Rates</h3><ul>";
 
         // loop through the break values
         for (let i = 0; i < breaks.length - 1; i++) {
