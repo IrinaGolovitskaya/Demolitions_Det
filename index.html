@@ -329,10 +329,10 @@
             position: 'bottomright'
         }).addTo(map);
 
-       
+
 
         // AJAX request for GeoJSON data
-    fetch("data/Detroit_Census_Blocks_2010.json")
+        fetch("data/Detroit_Census_Blocks_2010.json")
             .then(function (response) {
                 console.log(response);
                 return response.json();
@@ -362,7 +362,7 @@
                 console.log(`Ruh roh! An error has occurred`, error);
             });
 
-    function processData(tracts, data) {
+        function processData(tracts, data) {
             // loop through all the tracts
             for (let i of tracts.features) {
                 // for each of the CSV data rows
@@ -392,14 +392,14 @@
                     // if the attribute is a number and not one of the fips codes or name
                     if (
                         prop != "GEO_ID" &&
-                        prop != "NAME" 
+                        prop != "NAME"
                     ) {
                         // push that attribute value into the array
                         rates.push(Number(tract.properties[prop]));
-                 
-                        }
+
                     }
                 }
+            }
             );
 
             // verify the result!
@@ -409,7 +409,7 @@
 
             // create color generator function
             var colorize = chroma
-                .scale(['E9E1DE','A3A6A6'])
+                .scale(['E9E1DE', 'A3A6A6'])
                 .classes(breaks)
                 .mode("lab");
 
@@ -424,192 +424,210 @@
         } // end processData()
 
         function drawMap(tracts, colorize) {
-        // create Leaflet object with geometry data and add to map
-        const dataLayer = L.geoJson(tracts, {
-          style: function (feature) {
-            return {
-              color: "black",
-              weight: 0,
-              fillOpacity: 1,
-              fillColor: "#1f78b4",
+            // create Leaflet object with geometry data and add to map
+            const dataLayer = L.geoJson(tracts, {
+                style: function (feature) {
+                    return {
+                        color: "black",
+                        weight: 0,
+                        fillOpacity: 1,
+                        fillColor: "#1f78b4",
+                    };
+                },
+
+
+            }).addTo(map);
+
+            // first set the zoom/center to the dataLayer's extent with padding
+            // map.fitBounds(dataLayer.getBounds(), {
+            //     padding: [50, 50],
+            // });
+
+            createSliderUI(dataLayer, colorize);
+
+            updateMap(dataLayer, colorize, "2014");
+        } // end drawMap()
+
+        function updateMap(dataLayer, colorize, currentYear) {
+            dataLayer.eachLayer(function (layer) {
+                const props = layer.feature.properties;
+
+                // set the fill color of layer based on its normalized data value
+                layer.setStyle({
+                    fillColor: colorize(Number(props[currentYear])),
+                    interactive: false,
+                });
+
+
+
+            })
+                .bringToBack();
+        } // end updateMap()
+
+        function drawLegend(breaks, colorize) {
+            // create a Leaflet control for the legend
+            const legendControl = L.control({
+                position: "topright",
+            });
+
+            // when the control is added to the map
+            legendControl.onAdd = function (map) {
+                // create a new division element with class of 'legend' and return
+                const legend = L.DomUtil.create("div", "legend");
+                return legend;
             };
-          },
 
-          
-        }).addTo(map);
+            // add the legend control to the map
+            legendControl.addTo(map);
 
-        // first set the zoom/center to the dataLayer's extent with padding
-        // map.fitBounds(dataLayer.getBounds(), {
-        //     padding: [50, 50],
-        // });
+            // select div and create legend title
+            const legend = document.querySelector(".legend");
+            legend.innerHTML = "<h3><span>2014</span> Housing units</h3><ul>";
 
-        createSliderUI(dataLayer, colorize);
+            // loop through the break values
+            for (let i = 0; i < breaks.length - 1; i++) {
+                // determine color value
+                const color = colorize(breaks[i], breaks);
 
-        updateMap(dataLayer, colorize, "2014");
-      } // end drawMap()
-
-      function updateMap(dataLayer, colorize, currentYear) {
-        dataLayer.eachLayer(function (layer) {
-          const props = layer.feature.properties;
-
-          // set the fill color of layer based on its normalized data value
-          layer.setStyle({
-            fillColor: colorize(Number(props[currentYear])),
-            interactive: false,
-          });
-
-          
-         
-        })
-        .bringToBack();
-      } // end updateMap()
-
-      function drawLegend(breaks, colorize) {
-        // create a Leaflet control for the legend
-        const legendControl = L.control({
-          position: "topright",
-        });
-
-        // when the control is added to the map
-        legendControl.onAdd = function (map) {
-          // create a new division element with class of 'legend' and return
-          const legend = L.DomUtil.create("div", "legend");
-          return legend;
-        };
-
-        // add the legend control to the map
-        legendControl.addTo(map);
-
-        // select div and create legend title
-        const legend = document.querySelector(".legend");
-        legend.innerHTML = "<h3><span>2014</span> Housing units</h3><ul>";
-
-        // loop through the break values
-        for (let i = 0; i < breaks.length - 1; i++) {
-          // determine color value
-          const color = colorize(breaks[i], breaks);
-
-          // create legend item
-          const classRange = `<li><span style="background:${color}"></span>
+                // create legend item
+                const classRange = `<li><span style="background:${color}"></span>
         ${breaks[i].toLocaleString()} &mdash;
         ${breaks[i + 1].toLocaleString()} </li>`;
 
-          // append to legend unordered list item
-          legend.innerHTML += classRange;
-        }
-        // close legend unordered list
-        legend.innerHTML +=
-          "<li><span style='background:#ccc'></span>No data</ul>";
-      } // end drawLegend()
+                // append to legend unordered list item
+                legend.innerHTML += classRange;
+            }
+            // close legend unordered list
+            legend.innerHTML +=
+                "<li><span style='background:#ccc'></span>No data</ul>";
+        } // end drawLegend()
 
-      function createSliderUI(dataLayer, colorize) {
-        // create Leaflet control for the slider
-        const sliderControl = L.control({ position: "bottomleft" });
+        function createSliderUI(dataLayer, colorize) {
+            // create Leaflet control for the slider
+            const sliderControl = L.control({ position: "bottomleft" });
 
-        // when added to the map
-        sliderControl.onAdd = function (map) {
-          // select an existing DOM element with an id of "ui-controls"
-          const slider = L.DomUtil.get("ui-controls");
+            // when added to the map
+            sliderControl.onAdd = function (map) {
+                // select an existing DOM element with an id of "ui-controls"
+                const slider = L.DomUtil.get("ui-controls");
 
-          // disable scrolling of map while using controls
-          L.DomEvent.disableScrollPropagation(slider);
+                // disable scrolling of map while using controls
+                L.DomEvent.disableScrollPropagation(slider);
 
-          // disable click events while using controls
-          L.DomEvent.disableClickPropagation(slider);
+                // disable click events while using controls
+                L.DomEvent.disableClickPropagation(slider);
 
-          // return the slider from the onAdd method
-          return slider;
-        };
-
-        // add the control to the map
-        sliderControl.addTo(map);
-
-        // select the form element
-        const slider = document.querySelector(".year-slider");
-
-        // listen for changes on input element
-        slider.addEventListener("input", function (e) {
-          // get the value of the selected option
-          const currentYear = e.target.value;
-          // update the map with current timestamp
-          updateMap(dataLayer, colorize, currentYear);
-          // update timestamp in legend heading
-          document.querySelector(".legend h3 span").innerHTML = currentYear;
-        });
-      } // end createSliderUI()
-
-      function buttonUI() {
-        button.style.top = h1.offsetHeight + 20 + "px";
-      }
-
-      function drawNeighborhoods(neighborhoods) {
-        // const bounds = L.latLngBounds();
-        const stateOutline = L.geoJson(neighborhoods, {
-          style: function (feature) {
-            return {
-              color: "#000",
-              weight: 1,
-              opacity: 0.75,
-              fillOpacity: 0,
-              interactive: true,
+                // return the slider from the onAdd method
+                return slider;
             };
-          },
-          onEachFeature: function (feature, layer) {
-            const name = feature.properties.name;
-           
-          },
+
+            // add the control to the map
+            sliderControl.addTo(map);
+
+            // select the form element
+            const slider = document.querySelector(".year-slider");
+
+            // listen for changes on input element
+            slider.addEventListener("input", function (e) {
+                // get the value of the selected option
+                const currentYear = e.target.value;
+                // update the map with current timestamp
+                updateMap(dataLayer, colorize, currentYear);
+                // update timestamp in legend heading
+                document.querySelector(".legend h3 span").innerHTML = currentYear;
+            });
+        } // end createSliderUI()
+
+        function buttonUI() {
+            button.style.top = h1.offsetHeight + 20 + "px";
+        }
+
+        function drawNeighborhoods(neighborhoods) {
+            // const bounds = L.latLngBounds();
+            const stateOutline = L.geoJson(neighborhoods, {
+                style: function (feature) {
+                    return {
+                        color: "#000",
+                        weight: 1,
+                        opacity: 0.75,
+                        fillOpacity: 0,
+                        interactive: true,
+                    };
+                },
+                onEachFeature: function (feature, layer) {
+                    const name = feature.properties.name;
+
+                },
 
 
-          onEachFeature: function (feature, layer) {
-            // when mousing over a layer
-            layer.on("mouseover", function () {
-              // change the stroke color and bring that element to the front
-              layer
-                .setStyle({
-                  color: "#e31b1b",
-                  weight: 3,
-                })
+                onEachFeature: function (feature, layer) {
+                    // when mousing over a layer
+                    layer.on("mouseover", function () {
+                        // change the stroke color and bring that element to the front
+                        layer
+                            .setStyle({
+                                color: "#e31b1b",
+                                weight: 3,
+                            })
+                            .bringToFront();
+                    });
+
+                    // on mousing off layer
+                    layer.on("mouseout", function () {
+                        // reset the layer style to its original stroke color
+                        layer.setStyle({
+                            color: "black",
+                            weight: 1,
+                        });
+                    });
+
+
+                    let tooltipInfo = "No data available";
+
+
+                    tooltipInfo = `<b>${feature.properties.name}</b></br>`;
+
+
+                    // bind a tooltip to layer with county-specific information
+                    layer.bindTooltip(tooltipInfo, {
+                        // sticky property so tooltip follows the mouse
+                        sticky: true,
+                    });
+
+
+                },
+
+
+            })
+                .addTo(map)
                 .bringToFront();
-            });
-
-            // on mousing off layer
-            layer.on("mouseout", function () {
-              // reset the layer style to its original stroke color
-              layer.setStyle({
-                color: "black",
-                weight: 1,
-              });
-            });
+            // console.log(bounds);
 
 
-            let tooltipInfo = "No data available";
+            // map.fitBounds(bounds, {
+            //   padding: [50, 50],
+            //   animate: false,
+            // });
+        }
 
 
-  tooltipInfo = `<b>${feature.properties.name}</b></br>
-          `;
+        //HEATMAP DEMOLITIONS
 
+        fetch ('data/Completed_Residential_Demolitions.geojson')
 
-// bind a tooltip to layer with county-specific information
-layer.bindTooltip(tooltipInfo, {
-  // sticky property so tooltip follows the mouse
-  sticky: true,
-});
+        .then(function (response) {
+                console.log(response);
+                return response.json();
+            })
+            .then(function (demolitions) {
+                console.log(demolitions);
 
+                const heatLayer = L.heatLayer(demolitions, { radius: 25 })
+        .addTo(map);
+            })
+           
 
-          },
-
-
-        })
-          .addTo(map)
-          .bringToFront();
-        // console.log(bounds);
-
-        
-        // map.fitBounds(bounds, {
-        //   padding: [50, 50],
-        //   animate: false,
-        // });
-      }
+       
 
 
     </script>
