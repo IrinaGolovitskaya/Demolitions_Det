@@ -435,27 +435,7 @@
             };
           },
 
-          onEachFeature: function (feature, layer) {
-            // when mousing over a layer
-            layer.on("mouseover", function () {
-              // change the stroke color and bring that element to the front
-              layer
-                .setStyle({
-                  color: "#e31b1b",
-                  weight: 3,
-                })
-                .bringToFront();
-            });
-
-            // on mousing off layer
-            layer.on("mouseout", function () {
-              // reset the layer style to its original stroke color
-              layer.setStyle({
-                color: "black",
-                weight: 1,
-              });
-            });
-          },
+          
         }).addTo(map);
 
         // first set the zoom/center to the dataLayer's extent with padding
@@ -475,21 +455,13 @@
           // set the fill color of layer based on its normalized data value
           layer.setStyle({
             fillColor: colorize(Number(props[currentYear])),
+            interactive: false,
           });
 
-          let tooltipInfo = "No data available";
-
-          if (props[currentYear]) {
-            tooltipInfo = `<b>${props["NAME"]} County</b></br>
-                    ${Number(props[currentYear]).toLocaleString()}%`;
-          }
-
-          // bind a tooltip to layer with county-specific information
-          layer.bindTooltip(tooltipInfo, {
-            // sticky property so tooltip follows the mouse
-            sticky: true,
-          });
-        });
+          
+         
+        })
+        .bringToBack();
       } // end updateMap()
 
       function drawLegend(breaks, colorize) {
@@ -519,8 +491,8 @@
 
           // create legend item
           const classRange = `<li><span style="background:${color}"></span>
-        ${breaks[i].toLocaleString()}% &mdash;
-        ${breaks[i + 1].toLocaleString()}% </li>`;
+        ${breaks[i].toLocaleString()} &mdash;
+        ${breaks[i + 1].toLocaleString()} </li>`;
 
           // append to legend unordered list item
           legend.innerHTML += classRange;
@@ -571,7 +543,7 @@
       }
 
       function drawNeighborhoods(neighborhoods) {
-        const bounds = L.latLngBounds();
+        // const bounds = L.latLngBounds();
         const stateOutline = L.geoJson(neighborhoods, {
           style: function (feature) {
             return {
@@ -579,21 +551,64 @@
               weight: 1,
               opacity: 0.75,
               fillOpacity: 0,
-              interactive: false,
+              interactive: true,
             };
           },
           onEachFeature: function (feature, layer) {
-            const name = feature.properties.NAME;
+            const name = feature.properties.name;
            
           },
+
+
+          onEachFeature: function (feature, layer) {
+            // when mousing over a layer
+            layer.on("mouseover", function () {
+              // change the stroke color and bring that element to the front
+              layer
+                .setStyle({
+                  color: "#e31b1b",
+                  weight: 3,
+                })
+                .bringToFront();
+            });
+
+            // on mousing off layer
+            layer.on("mouseout", function () {
+              // reset the layer style to its original stroke color
+              layer.setStyle({
+                color: "black",
+                weight: 1,
+              });
+            });
+
+
+            let tooltipInfo = "No data available";
+
+
+  tooltipInfo = `<b>${feature.properties.name}</b></br>
+          `;
+
+
+// bind a tooltip to layer with county-specific information
+layer.bindTooltip(tooltipInfo, {
+  // sticky property so tooltip follows the mouse
+  sticky: true,
+});
+
+
+          },
+
+
         })
           .addTo(map)
           .bringToFront();
-        console.log(bounds);
-        map.fitBounds(bounds, {
-          padding: [50, 50],
-          animate: false,
-        });
+        // console.log(bounds);
+
+        
+        // map.fitBounds(bounds, {
+        //   padding: [50, 50],
+        //   animate: false,
+        // });
       }
 
 
