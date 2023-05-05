@@ -1,6 +1,3 @@
-(function () {
-
-
 // map options
 const options = {
     scrollWheelZoom: true,
@@ -321,4 +318,3 @@ fetch('data/Completed_Residential_Demolitions.geojson')
 
 
 
-})

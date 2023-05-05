@@ -21,6 +21,12 @@ h1 {
     border-radius: 1px;
 }
 
+h2 {
+    font-size: 1;
+    font-family: 'PT Sans';
+
+}
+
 #map {
     position: absolute;
     width: 100%;
@@ -35,7 +41,7 @@ h1 {
   }
 
 .legend {
-    font-family: Lato, sans-serif;
+    font-family: 'PT Sans';
     padding: 6px 8px;
     font-size: 1em;
     background: rgba(75, 75, 75, 0.8);
