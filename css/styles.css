@@ -1,6 +1,3 @@
-* {
-    box-sizing: border-box;
-}
 
 body {
     margin: 0;
@@ -21,7 +18,7 @@ h1 {
     color: whitesmoke;
     font-size: 1.5em;
     background: rgba(25, 25, 25, 0.8);
-    border-radius: 5px;
+    border-radius: 1px;
 }
 
 #map {
@@ -31,28 +28,11 @@ h1 {
     bottom: 0;
 }
 
-h2 {
-    position: absolute;
+#content {
     z-index: 650;
-    top: 10px;
-    left: 15px;
-    padding: 8px 15px;
-    margin: 0;
-    color: whitesmoke;
-    font-size: 1.2em;
-    text-transform: uppercase;
-    background: rgba(25, 25, 25, 0.8);
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-h2:hover {
-    background: rgb(72, 72, 72);
-}
-
-h2:active {
-    background: rgb(228, 175, 0);
-}
+    position: absolute;
+    background: #CBC8C3
+  }
 
 .legend {
     font-family: Lato, sans-serif;
@@ -61,7 +41,7 @@ h2:active {
     background: rgba(75, 75, 75, 0.8);
     color: whitesmoke;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
+    border-radius: 1px;
     width: 160px;
 }
 
@@ -96,66 +76,7 @@ h2:active {
     margin-right: 10px;
 }
 
-#modal {
-    display: none;
-    position: absolute;
-    z-index: 2000;
-    padding: 10px;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.8);
-    color: whitesmoke;
-    font-size: 1.5em;
-}
 
-#modal .container {
-    width: 500px;
-    margin: 10px auto;
-    padding: 5px 20px;
-    position: relative;
-    background: rgba(25, 25, 25, 0.8);
-    border-radius: 5px;
-    border: #0d0000 1px solid;
-}
-
-#modal a:link,
-#modal a:visited {
-    color: rgb(228, 175, 0);
-}
-
-#modal a:hover {
-    color: rgb(255, 234, 166);
-}
-
-#modal div {
-    margin: 20px auto;
-}
-
-#modal h1 {
-    display: none;
-}
-
-#modal p {
-    font-size: 1.1rem;
-    line-height: 1.5rem;
-    margin: 5px 0;
-}
-
-#modal .footer {
-    font-size: 1rem;
-    color: rgb(201, 201, 201);
-    text-align: center;
-}
-
-#modal span {
-    position: absolute;
-    top: 7px;
-    right: 7px;
-    cursor: pointer;
-}
 
 /* Small devices (portrait phones, 576px and below) */
 @media (max-width: 576px) and (orientation: portrait) {
@@ -163,19 +84,7 @@ h2:active {
         display: none;
     }
 
-    #modal .container {
-        width: 90%;
-    }
-
-    #modal h1 {
-        display: block;
-        position: relative;
-        margin: 20px auto;
-        padding: 0;
-        font-size: 1.6rem;
-        top: unset;
-        left: unset;
-    }
+    
 }
 
 #ui-controls {
@@ -184,7 +93,7 @@ h2:active {
     padding: 8px 25px 8px 15px;
     background: rgba(75, 75, 75, 0.8);
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
+    border-radius: 1px;
     color: whitesmoke;
 }
 

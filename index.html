@@ -12,60 +12,65 @@
 
     <link href="css/styles.css" rel="stylesheet" />
     <style>
-       
+
     </style>
 </head>
 
 <body>
-    <h1>Residential Demolitions in Detroit: 2014 &ndash; 2023</h1>
-    <h2 id="button">Info</h2>
-    <div id="map"></div>
-    <div id="ui-controls">
-        <label>
-            <span class="min">2014</span>
-            <span class="max">2023</span>
-            <input type="range" min="2014" , max="2023" , value="2014" , step="1" , class="year-slider" />
-        </label>
-    </div>
-    <div id="modal">
-        <div class="container-fluid">
-            <span>
-                &times;
-                <!-- <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="feather feather-x"
-          >
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg> -->
-            </span>
-            <h1>Residential Demolitions in Detroit: 2014 &ndash; 2023</h1>
+    <div class="container-fluid">
 
-            <p>
+        <div class="row">
 
-            </p>
 
-            <div class="title">Data sources and methods:</div>
+            <div id="content" class="col-md-3 py-2 overflow-scroll">
 
-            <p>
+               
+                
+                
+                
+               
+                    
 
-                <a href="">Link</a>
-            </p>
-            <p>
-                Download
-                <a href="">CSV</a> file.
-            </p>
+                    <p>
 
-            <div class="footer">New Maps Plus | March, 2023</div>
+                    </p>
+
+                    <div class="title">Data sources and methods:</div>
+
+                    <p>
+
+                        <a href="">Link</a>
+                    </p>
+                    <p>
+                        Download
+                        <a href="">CSV</a> file.
+                    </p>
+
+                    <div class="footer">New Maps Plus | March, 2023</div>
+
+                
+            
+            <!-- closing up the first column -->
+            </div>
+
+            <!-- the second column with the map -->
+            <div class="col-md-9 p-0">
+                <div id="map"></div>
+            </div>
+
+            <!-- ui slider -->
+            <div id="ui-controls">
+                <label>
+                    <span class="min">2014</span>
+                    <span class="max">2023</span>
+                    <input type="range" min="2014" , max="2023" , value="2014" , step="1" , class="year-slider" />
+                </label>
+            </div>
+
+        <!-- closing up the container-fluid -->
         </div>
+
+    <!-- closing up the row -->
     </div>
 
     <!-- Leaflet JS -->
@@ -80,33 +85,16 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         // get page elements
-        const modal = document.querySelector("#modal");
-        const button = document.querySelector("#button");
-        const h1 = document.querySelector("h1");
+        
 
-        // display modal when button is clicked
-        button.addEventListener("click", function () {
-            modal.style.display = "block";
-        });
-
-        // close modal when user clicks anywhere on the page
-        modal.addEventListener("click", function () {
-            modal.style.display = "none";
-        });
-
-        // Set button UI
-        buttonUI();
-
-        // Add event listener for window resize
-        // When page rotates or is resized, reset page UI
-        window.addEventListener("resize", buttonUI);
-
+       
+       
         // map options
         const options = {
             scrollWheelZoom: true,
             zoomControl: false,
             dragging: true,
-            center: [42.35, -83.15],
+            center: [42.35, -83.1],
             zoom: 11,
             animate: false,
         };
@@ -121,7 +109,7 @@
         }).addTo(map);
 
         L.control.zoom({
-            position: 'bottomright'
+            position: 'bottomleft'
         }).addTo(map);
 
 
@@ -299,7 +287,7 @@
 
         function createSliderUI(dataLayer, colorize) {
             // create Leaflet control for the slider
-            const sliderControl = L.control({ position: "bottomleft" });
+            const sliderControl = L.control({ position: "bottomright" });
 
             // when added to the map
             sliderControl.onAdd = function (map) {
@@ -333,9 +321,7 @@
             });
         } // end createSliderUI()
 
-        function buttonUI() {
-            button.style.top = h1.offsetHeight + 20 + "px";
-        }
+        
 
         function drawNeighborhoods(neighborhoods) {
             // const bounds = L.latLngBounds();
@@ -408,9 +394,9 @@
 
         //HEATMAP DEMOLITIONS
 
-        fetch ('data/Completed_Residential_Demolitions.geojson')
+        fetch('data/Completed_Residential_Demolitions.geojson')
 
-        .then(function (response) {
+            .then(function (response) {
                 console.log(response);
                 return response.json();
             })
@@ -418,11 +404,11 @@
                 console.log(demolitions);
 
                 const heatLayer = L.heatLayer(demolitions, { radius: 25 })
-        .addTo(map);
+                    .addTo(map);
             })
-           
 
-       
+
+
 
 
     </script>
