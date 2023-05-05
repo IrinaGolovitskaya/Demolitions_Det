@@ -13,4 +13,4 @@ the overview of them you can see on the [Data Driven Detroit Portal] (https://da
 
 
 
-I am using Stadia.AlidadeSmooth as a basemap obtained from [Leaflet-providers] (https://leaflet-extras.github.io/leaflet-providers/preview/)
+I am using Stadia.AlidadeSmooth as a basemap obtained from [Leaflet-providers] (https://leaflet-extras.github.io/leaflet-providers/preview/) 
