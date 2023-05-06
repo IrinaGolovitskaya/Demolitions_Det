@@ -11,11 +11,29 @@ const options = {
 // create the Leaflet map
 const map = L.map("map", options);
 
-// request tiles and add to map
-const tiles = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
-    maxZoom: 20,
-    attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
-}).addTo(map);
+// // request tiles and add to map
+// const tiles = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
+//     maxZoom: 20,
+//     attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+// }).addTo(map);
+
+
+// mapbox API access Token
+var accessToken = "pk.eyJ1IjoiaXJpbmFnb2xvdml0c2theWEiLCJhIjoiY2w0NjZ3ejlmMDVuazNicGJvdnl4N2FpdSJ9.8ddmRR-KV1szad66m6GL4A";
+
+// request a mapbox raster tile layer and add to map
+L.tileLayer(
+    `https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}`,
+    {
+        attribution:
+            'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+        maxZoom: 18,
+        id: "light-v10",
+        accessToken: accessToken,
+    }
+).addTo(map);
+
+
 
 L.control.zoom({
     position: 'bottomleft'
