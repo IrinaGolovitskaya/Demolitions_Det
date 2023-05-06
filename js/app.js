@@ -17,9 +17,9 @@ const tiles = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}
     attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-L.control.zoom({
-    position: 'bottomleft'
-}).addTo(map);
+// L.control.zoom({
+//     position: 'bottomleft'
+// }).addTo(map);
 
 
 

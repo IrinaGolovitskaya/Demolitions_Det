@@ -1,9 +1,12 @@
+* {
+    box-sizing: content-box;
+  }
 
 body {
     margin: 0;
     padding: 0;
     background: whitesmoke;
-    font-family: Roboto, sans-serif;
+    font-family: 'PT Sans';
     color: #0d0000;
     font-size: 100%;
 }
@@ -23,7 +26,7 @@ h1 {
 
 h2 {
     font-size: 1;
-    font-family: 'PT Sans';
+    font-family: Roboto;
 
 }
 
@@ -37,6 +40,8 @@ h2 {
 #content {
     z-index: 650;
     position: absolute;
+    top: 0px;
+    left: 0px;
     background: #CBC8C3
   }
 
