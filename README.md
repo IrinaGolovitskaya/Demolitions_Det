@@ -10,7 +10,7 @@ As many American cities face the crisis of adequate housing supply and affordabi
 ## Data Sources
 
 Census Blocks TIGER/Shaperfile obtained from [US Census](https://www.census.gov/geographies/mapping-files/2010/geo/tiger-line-file.html).
-Since the latest changes in boundaries of Census Blocks were made in 2010, I didn't have to worry about inconsistensies. 
+Since the latest changes in boundaries of Census Blocks were made in 2010, I didn't have to worry about inconsistencies. 
 
 Housing Units Estimates obtained from [US Census](https://data.census.gov/map?g=050XX00US26163$1400000&tid=DECENNIALPL2020.P1&layer=VT_2020_140_00_PY_D1&mode=thematic&loc=42.3350,-82.9896,z10.4068). I used only total housing units, but these sets
 have plenty of data that might be interesting in examining the dynamics of abandonment too.

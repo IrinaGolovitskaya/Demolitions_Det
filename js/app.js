@@ -303,19 +303,6 @@ function drawNeighborhoods(neighborhoods) {
 
 //HEATMAP DEMOLITIONS
 
-// fetch('data/Completed_Residential_Demolitions.geojson')
-
-//     .then(function (response) {
-//         console.log(response);
-//         return response.json();
-//     })
-//     .then(function (demolitions) {
-//         console.log(demolitions);
-
-//         const heatLayer = L.heatLayer(demolitions, { radius: 25 })
-//             .addTo(map);
-//     })
-
 
 
 $.getJSON('./data/Completed_Residential_Demolitions.geojson', function (data) {
@@ -327,7 +314,7 @@ $.getJSON('./data/Completed_Residential_Demolitions.geojson', function (data) {
       }
     });
   
-    var heatLayer = L.heatLayer(latlngs, {radius: 30}).addTo(map);
+    var heatLayer = L.heatLayer(latlngs, {radius: 15}).addTo(map);
   });
 
 
