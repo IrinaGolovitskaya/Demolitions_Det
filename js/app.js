@@ -17,9 +17,9 @@ const tiles = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}
     attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-// L.control.zoom({
-//     position: 'bottomleft'
-// }).addTo(map);
+L.control.zoom({
+    position: 'bottomleft'
+}).addTo(map);
 
 
 
@@ -303,18 +303,31 @@ function drawNeighborhoods(neighborhoods) {
 
 //HEATMAP DEMOLITIONS
 
-fetch('data/Completed_Residential_Demolitions.geojson')
+// fetch('data/Completed_Residential_Demolitions.geojson')
 
-    .then(function (response) {
-        console.log(response);
-        return response.json();
-    })
-    .then(function (demolitions) {
-        console.log(demolitions);
+//     .then(function (response) {
+//         console.log(response);
+//         return response.json();
+//     })
+//     .then(function (demolitions) {
+//         console.log(demolitions);
 
-        const heatLayer = L.heatLayer(demolitions, { radius: 25 })
-            .addTo(map);
-    })
+//         const heatLayer = L.heatLayer(demolitions, { radius: 25 })
+//             .addTo(map);
+//     })
 
+
+
+$.getJSON('./data/Completed_Residential_Demolitions.geojson', function (data) {
+    var latlngs = [];
+  
+    L.geoJSON(data, {
+      onEachFeature: function(feature, layer) {
+        latlngs.push([layer.getLatLng().lat, layer.getLatLng().lng]);
+      }
+    });
+  
+    var heatLayer = L.heatLayer(latlngs, {radius: 30}).addTo(map);
+  });
 
 
