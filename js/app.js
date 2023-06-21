@@ -332,10 +332,10 @@ $.getJSON('./data/Completed_Residential_Demolitions.geojson', function (data) {
 
    const heat = L.heatLayer(latlngs, {
         radius: 10, // Set the radius of each heatmap point
-        blur: 10, // Set the blur radius of the heatmap
+        blur: 4, // Set the blur radius of the heatmap
         maxZoom: 18, // Set the maximum zoom level for the heatmap to be displayed
         gradient: { 
-            0.4: '#436977', 1: '#032C2B' 
+            0.3: '#436977', 1: '#032C2B' 
         }, // Define the gradient colors for the heatmap
         // Add more configuration options as needed
     }).addTo(map);
