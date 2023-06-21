@@ -3,8 +3,8 @@ const options = {
     scrollWheelZoom: true,
     zoomControl: false,
     dragging: true,
-    center: [42.35, -83.1],
-    zoom: 11,
+    center: [42.37, -83.15],
+    zoom: 11.95,
     animate: false,
 };
 
@@ -165,6 +165,7 @@ function updateMap(dataLayer, colorize, currentYear) {
         layer.setStyle({
             fillColor: colorize(Number(props[currentYear])),
             interactive: false,
+            fillOpacity: .6,
         });
 
 
@@ -307,7 +308,7 @@ function drawNeighborhoods(neighborhoods) {
 
     })
         .addTo(map)
-    // .bringToFront();
+    .bringToFront();
     // console.log(bounds);
 
 
@@ -330,26 +331,15 @@ $.getJSON('./data/Completed_Residential_Demolitions.geojson', function (data) {
     });
 
    const heat = L.heatLayer(latlngs, {
-        radius: 15, // Set the radius of each heatmap point
+        radius: 10, // Set the radius of each heatmap point
         blur: 10, // Set the blur radius of the heatmap
         maxZoom: 18, // Set the maximum zoom level for the heatmap to be displayed
-        gradient: { 0.4: 'blue', 0.6: 'cyan', 0.7: 'lime', 0.8: 'yellow', 1: 'red' }, // Define the gradient colors for the heatmap
+        gradient: { 
+            0.4: '#436977', 1: '#032C2B' 
+        }, // Define the gradient colors for the heatmap
         // Add more configuration options as needed
-    });
+    }).addTo(map);
 
-  // Function to bring heatmap layer to the front
-function bringHeatmapToFront() {
-    if (map.hasLayer(heat)) {
-      map.removeLayer(heat);
-      map.addLayer(heat);
-    }
-  }
-  
-  // Add the heatmap layer to the map
-  heat.addTo(map);
-  
-  // Call the function to bring the heatmap layer to the front
-  bringHeatmapToFront();
 
 });
 
