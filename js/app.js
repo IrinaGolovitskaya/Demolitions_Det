@@ -40,7 +40,6 @@ L.control.zoom({
 }).addTo(map);
 
 
-
 // AJAX request for GeoJSON data
 fetch("data/Detroit_Census_Blocks_2010.json")
     .then(function (response) {
@@ -308,31 +307,50 @@ function drawNeighborhoods(neighborhoods) {
 
     })
         .addTo(map)
-        .bringToFront();
+    // .bringToFront();
     // console.log(bounds);
 
 
-    // map.fitBounds(bounds, {
-    //   padding: [50, 50],
-    //   animate: false,
-    // });
+    map.fitBounds(bounds, {
+        padding: [50, 50],
+        animate: false,
+    });
 }
 
 
 //HEATMAP DEMOLITIONS
 
-
-
 $.getJSON('./data/Completed_Residential_Demolitions.geojson', function (data) {
     var latlngs = [];
-  
+
     L.geoJSON(data, {
-      onEachFeature: function(feature, layer) {
-        latlngs.push([layer.getLatLng().lat, layer.getLatLng().lng]);
-      }
+        onEachFeature: function (feature, layer) {
+            latlngs.push([layer.getLatLng().lat, layer.getLatLng().lng]);
+        }
     });
+
+   const heat = L.heatLayer(latlngs, {
+        radius: 15, // Set the radius of each heatmap point
+        blur: 10, // Set the blur radius of the heatmap
+        maxZoom: 18, // Set the maximum zoom level for the heatmap to be displayed
+        gradient: { 0.4: 'blue', 0.6: 'cyan', 0.7: 'lime', 0.8: 'yellow', 1: 'red' }, // Define the gradient colors for the heatmap
+        // Add more configuration options as needed
+    });
+
+  // Function to bring heatmap layer to the front
+function bringHeatmapToFront() {
+    if (map.hasLayer(heat)) {
+      map.removeLayer(heat);
+      map.addLayer(heat);
+    }
+  }
   
-    var heatLayer = L.heatLayer(latlngs, {radius: 15}).addTo(map);
-  });
+  // Add the heatmap layer to the map
+  heat.addTo(map);
+  
+  // Call the function to bring the heatmap layer to the front
+  bringHeatmapToFront();
+
+});
 
 
