@@ -4,7 +4,7 @@ const options = {
     zoomControl: false,
     dragging: true,
     center: [42.37, -83.15],
-    zoom: 11.95,
+    zoom: 11.6,
     animate: false,
 };
 
@@ -28,7 +28,7 @@ L.tileLayer(
         attribution:
             'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
         maxZoom: 18,
-        id: "light-v10",
+        id: "light-v11",
         accessToken: accessToken,
     }
 ).addTo(map);
@@ -165,7 +165,7 @@ function updateMap(dataLayer, colorize, currentYear) {
         layer.setStyle({
             fillColor: colorize(Number(props[currentYear])),
             interactive: false,
-            fillOpacity: .6,
+            fillOpacity: .5,
         });
 
 
@@ -256,7 +256,7 @@ function drawNeighborhoods(neighborhoods) {
         style: function (feature) {
             return {
                 color: "#000",
-                weight: 1,
+                weight: 0.75,
                 opacity: 0.75,
                 fillOpacity: 0,
                 interactive: true,
@@ -332,10 +332,10 @@ $.getJSON('./data/Completed_Residential_Demolitions.geojson', function (data) {
 
    const heat = L.heatLayer(latlngs, {
         radius: 10, // Set the radius of each heatmap point
-        blur: 4, // Set the blur radius of the heatmap
+        blur: 10, // Set the blur radius of the heatmap
         maxZoom: 18, // Set the maximum zoom level for the heatmap to be displayed
         gradient: { 
-            0.3: '#436977', 1: '#032C2B' 
+            0.3: '#462d1c', 1: '#462d1c' 
         }, // Define the gradient colors for the heatmap
         // Add more configuration options as needed
     }).addTo(map);
